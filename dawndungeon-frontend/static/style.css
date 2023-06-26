@@ -1,0 +1,87 @@
+body {
+    background-color: #202123 ;
+}
+
+.title {
+    font-family: Gill Sans, sans-serif;
+    font-weight: bold;
+    color: white;
+}
+
+.stat {
+    color: antiquewhite;
+}
+
+.stat > div {
+    text-align: center;
+}
+
+.form-control:focus {
+    border-color: #FF0000;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(255, 0, 0, 0.6);
+}
+
+.form-control::placeholder {
+    color: lightgray;
+    opacity: 1;
+}
+
+.attribute {
+    background-color: #111111;
+}
+
+.debug {
+    background-color: #313336;
+    color: antiquewhite;
+}
+
+.input-group-text {
+    color: gray;
+    background-color: #18191e;
+    border-color: #040404;
+}
+
+#terminal {
+    font-family: monospace;
+    background-color: #000;
+    color: #fff;
+    padding: 20px;
+    scrollbar-color: #330867 #F5F5F5;
+}
+
+#output {
+    max-height: 535px; 
+    overflow-y: scroll;
+}
+
+#input {
+    background-color: #262730;
+    color: wheat;
+}
+
+#prompt {
+    font-weight: bold;
+}
+#cmd {
+    background: transparent;
+    color: antiquewhite;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    background-color: #000;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar {
+    width: 7px;
+    background-color: #000;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    background-image: -webkit-gradient(linear, left bottom, left top, from(#30cfd0), to(#330867));
+    background-image: -webkit-linear-gradient(bottom, #30cfd0 0%, #330867 100%);
+    background-image: linear-gradient(to top, #30cfd0 0%, #330867 100%);
+}

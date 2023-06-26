@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', path='/node_modules/bootstrap/dist/css/bootstrap.css') }}"
+            type="text/css"
+        />
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', path='/style.css') }}"
+            type="text/css"
+        />
+        <title>Document</title>
+        <script
+            src="https://code.jquery.com/jquery-3.7.0.min.js"
+            integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+            crossorigin="anonymous"
+        ></script>
+    </head>
+    <body>
+        <!-- <div class="title">DawnDungeon</div> -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="container-md mt-3">
+            <div class="row">
+                <div class="col-md-9" id="terminal" style="height: 600px">
+                    <!-- Terminal -->
+                    <div class="" id="output"></div>
+                    <!-- Output -->
+                    <div id="input">
+                        <!-- Input prompt -->
+                        <span id="prompt"> </span>
+                        <div class="input-group mb-1">
+                            <input
+                                type="text"
+                                id="cmd"
+                                class="form-control"
+                                placeholder="Action"
+                                aria-label="Recipient's username"
+                                aria-describedby="basic-addon2"
+                            />
+                            <div class="spinner-border spinner">Loading</div>
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="basic-addon2"
+                                    >Press enter
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 attribute border-dark stat">
+                    <!-- Attribute Container -->
+                    <div class="row-md-3 m-1 border">
+                        <!-- Character attribute -->
+                        <span class="character-attribute"></span>
+                    </div>
+                    <div class="row-md-3 m-1 border">
+                        <!-- Inventory -->
+                        Inventory <br />
+                        <span class="inventory"></span>
+                    </div>
+                    <div class="row-md-3 m-1 border">
+                        <!-- Quest -->
+                        Quests <br />
+                        <span class="quests"></span>
+                    </div>
+                    <div class="row-md-3 m-1 border">
+                        <!-- World -->
+                        World <br />
+                        <span class="world"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-md m-2 mx-auto border rounded debug">
+            <!-- Content -->
+            Content
+            <div class="btn btn-dark btn-sm debug-show m-1">...</div>
+            <div class="debug-content"></div>
+        </div>
+        <script>
+            var token = "{{ access_token }}";
+            function insertInformation(data) {
+                // Read Json file
+                character = data.metadata.character;
+                inventory = character.inventory;
+                quests = character.quests;
+                world = data.metadata.world;
+
+                $("#output").append(data.content);
+
+                $(".debug-content")
+                    .html(JSON.stringify(data, null, "\t"))
+                    .hide();
+
+                $(".character-attribute").html(
+                    "Name: " +
+                        character.name +
+                        "<br/>" +
+                        "Age: " +
+                        character.age +
+                        "<br/>" +
+                        "Level: " +
+                        character.level +
+                        "<br/>" +
+                        "Coins: " +
+                        character.coins +
+                        "<br/>" +
+                        "Health: " +
+                        character.current_health +
+                        "/" +
+                        character.max_health +
+                        "<br/>"
+                );
+
+                $(".world").html(
+                    world.name + "<br/>" + world.description + "<br/>"
+                );
+
+                // List all weapons
+                var weaponsList = "";
+                $.each(inventory, function (i, weapon) {
+                    weaponsList +=
+                        "<div class='btn btn-dark btn-sm m-1 weapon'>" +
+                        weapon.name +
+                        "</div>" +
+                        "\n";
+                });
+
+                $(".inventory").html(weaponsList);
+
+                $(".weapon").click(function () {
+                    // Get the index of the clicked button
+                    var weaponIndex = $(".weapon").index(this);
+                    weapon = inventory[weaponIndex];
+                    alert(
+                        "Description: " +
+                            weapon.name +
+                            "\n" +
+                            "Damage: " +
+                            weapon.damage
+                    );
+                });
+
+                // List all quests
+                var questLines = "";
+                $.each(quests, function (i, quest) {
+                    questLines +=
+                        "<div class='btn btn-dark btn-sm m-1 quest'>" +
+                        quest.title +
+                        "</div>" +
+                        "\n";
+                });
+
+                $(".quests").html(questLines);
+
+                $(".quest").click(function () {
+                    // Get the index of the clicked button
+                    var questIndex = $(".quest").index(this);
+                    quest = quests[questIndex];
+                    alert(
+                        "Description: " +
+                            quest.description +
+                            "\n" +
+                            "Rewards: " +
+                            quest.rewards.coins +
+                            " coins" +
+                            "\n" +
+                            "Items: " +
+                            getItemNames(quest.rewards.items)
+                    );
+                });
+
+                function getItemNames(items) {
+                    var itemNames = "";
+                    $.each(items, function (index, item) {
+                        itemNames += "\n" + item.name;
+                    });
+                    return itemNames;
+                }
+            }
+
+            $.ajax({
+                url: "http://localhost:25611/session/create-random",
+                type: "POST",
+                datatype: "json",
+                contentType: false,
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Access-Control-Allow-Origin": "http://localhost",
+                    "Access-Control-Allow-Credentials": true
+                },
+                beforeSend: function () {
+                    $("#cmd").attr("disabled", "disabled");
+                    $("#cmd").addClass("opacity-25");
+                    $(".spinner").show();
+                },
+                complete: function () {
+                    $("#cmd").removeAttr("disabled");
+                    $("#cmd").removeClass("opacity-25");
+                    $(".spinner").hide();
+                },
+                success: function (response) {
+                    // Handle the response from the server
+                    console.log(response);
+                    insertInformation(response);
+                },
+                error: function (error) {
+                    if (error.status == 401) {
+                        window.location.href("/login");
+                    }
+                    console.log(error);
+                },
+            });
+
+            $(document).ready(function () {
+                $.ajax({
+                    url: "http://localhost:25611/users/me",
+                    type: "GET",
+                    datatype: "json",
+                    // data: JSON.stringify({ "cmd": cmd }),
+                    headers: {
+                        Authorization: "Bearer " + token,
+                    },
+                    contentType: "application/json",
+                    success: function (response) {
+                        console.log(response);
+                    },
+                    error: function (error) {
+                        if (error.status == 401) {
+                            window.location.href("/login");
+                        }
+                        console.log(error);
+                    },
+                });
+
+                $("#cmd").focus();
+                $("#cmd").keypress(function (e) {
+                    if (e.which == 13) {
+                        // if user press enter
+                        var cmd = $("#cmd").val();
+                        $("#output").append("<div>" + cmd + "</div>");
+                        $("#cmd").val("");
+
+                        var action_data = new FormData();
+                        action_data.append("action", cmd);
+                        console.log(action_data);
+
+                        // Send the cmd variable to the server using AJAX
+                        $.ajax({
+                            type: "POST",
+                            url: "http://localhost:25611/session/execute",
+                            data: action_data,
+                            processData: false,
+                            contentType: false,
+                            headers: {
+                                "Access-Control-Allow-Origin": "http://localhost",
+                                "Access-Control-Allow-Credentials": true
+                            },
+                            beforeSend: function () {
+                                $("#cmd").attr("disabled", "disabled");
+                                $("#cmd").addClass("opacity-25");
+                                $(".spinner").show();
+                            },
+                            complete: function () {
+                                $("#cmd").removeAttr("disabled");
+                                $("#cmd").removeClass("opacity-25");
+                                $(".spinner").hide();
+                            },
+                            success: function (response) {
+                                // Handle the response from the server
+                                console.log(response);
+                                insertInformation(response);
+                            },
+                            error: function (error) {
+                                if (error.status == 401) {
+                                    window.location.href("/login");
+                                }
+                                console.log(error);
+                            },
+                        });
+                    }
+                });
+
+                $(".debug-show").click(function () {
+                    $(".debug-content").toggle("slow");
+                });
+            });
+        </script>
+    </body>
+</html>
