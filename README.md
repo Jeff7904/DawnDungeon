@@ -1,3 +1,4 @@
+
 <div align="center">
 
 # ⛓️🔗 **DawnDungeon** 🐉🏰
@@ -16,5 +17,4 @@ As you navigate through the game, your character's attributes, such as their hea
 
 So, are you ready to step into the world of **DawnDungeon**? Your adventure awaits! 🚀🌌
 
-
-https://github.com/DawnDungeon/DawnDungeon/assets/57824016/3d372d8d-55d4-4e90-bf5a-cec1c2ee33d4
+https://github.com/DawnDungeon/DawnDungeon/assets/57824016/c56d69f4-b511-4ff7-ad57-b6868ae03739
